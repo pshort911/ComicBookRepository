@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ComicBookRepository.ComicBookTitle>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstIssue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastIssue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumSpIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LimitedSeries)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-controller="ComicBookDetails" asp-action="Index" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstIssue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastIssue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumIssues)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumSpIssues)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LimitedSeries)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
