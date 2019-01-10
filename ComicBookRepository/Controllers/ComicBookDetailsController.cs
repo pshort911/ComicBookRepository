@@ -113,7 +113,9 @@ namespace ComicBookRepository.Controllers
             _userId = user?.Id;
             if (_userId == null) return NotFound();
 
-            var comicBookDetails = id == null ? _context.ComicBookDetails.Where(m => m.OwnerId == _userId) : _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.TitleId == id).Include(t => t.Title);
+            var comicBookDetails = id == null ? 
+                _context.ComicBookDetails.Where(m => m.OwnerId == _userId) : 
+                _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.TitleId == id).Include(t => t.Title);
             return View(comicBookDetails);
         }
 
