@@ -1,4 +1,4 @@
-﻿@model ComicBookRepository.ComicBookTitle
+﻿@model ComicBookTitle
 
 @{
     ViewData["Title"] = "Delete";
@@ -46,6 +46,12 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.LimitedSeries)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SortableTitle)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SortableTitle)
         </dd>
     </dl>
     

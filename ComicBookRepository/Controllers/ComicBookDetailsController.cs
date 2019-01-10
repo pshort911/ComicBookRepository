@@ -42,7 +42,7 @@ namespace ComicBookRepository.Controllers
             comicBookDetails.OwnerId = _userId;
             _context.Add(comicBookDetails);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { comicBookDetails.Title.Id });
 
         }
 
@@ -67,19 +67,7 @@ namespace ComicBookRepository.Controllers
             var comicBookDetails = await _context.ComicBookDetails.FindAsync(id);
             _context.ComicBookDetails.Remove(comicBookDetails);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: ComicBookDetails/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null) return NotFound();
-
-            var comicBookDetails = await _context.ComicBookDetails
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (comicBookDetails == null) return NotFound();
-
-            return View(comicBookDetails);
+            return RedirectToAction(nameof(Index), new { comicBookDetails.Title.Id });
         }
 
         // GET: ComicBookDetails/Edit/5
@@ -115,28 +103,17 @@ namespace ComicBookRepository.Controllers
                 throw;
             }
 
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: ComicBookDetails
-        public async Task<IActionResult> Index()
-        {
-            var user = await GetCurrentUserAsync();
-            _userId = user?.Id;
-            if (_userId == null) return NotFound();
-
-            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId);
-            return View(comicBookDetails);
+            return RedirectToAction(nameof(Index), new { comicBookDetails.Title.Id });
         }
 
         //GET: ComicBookDetails/asdf
-        public async Task<IActionResult> Index(long? titleId)
+        public async Task<IActionResult> Index(long? id)
         {
             var user = await GetCurrentUserAsync();
             _userId = user?.Id;
             if (_userId == null) return NotFound();
 
-            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.TitleId == titleId);
+            var comicBookDetails = id == null ? _context.ComicBookDetails.Where(m => m.OwnerId == _userId) : _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.TitleId == id).Include(t => t.Title);
             return View(comicBookDetails);
         }
 
@@ -144,10 +121,7 @@ namespace ComicBookRepository.Controllers
 
         #region Private Methods
 
-        private bool ComicBookDetailsExists(long id)
-        {
-            return _context.ComicBookDetails.Any(e => e.Id == id);
-        }
+        private bool ComicBookDetailsExists(long id) => _context.ComicBookDetails.Any(e => e.Id == id);
 
         private Task<IdentityUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 

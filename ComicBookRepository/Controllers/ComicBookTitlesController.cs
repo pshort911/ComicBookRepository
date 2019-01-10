@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComicBookRepository.Controllers
@@ -12,26 +13,12 @@ namespace ComicBookRepository.Controllers
         public ComicBookTitlesController(ComicBookRepositoryContext context) => _context = context;
 
         // GET: ComicBookTitles
-        public async Task<IActionResult> Index() => View(await _context.ComicBookTitle.ToListAsync());
-
-
-        // GET: ComicBookTitles/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Index()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comicBookTitle = await _context.ComicBookTitle
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (comicBookTitle == null)
-            {
-                return NotFound();
-            }
-
-            return View(comicBookTitle);
+            var titleList = await _context.ComicBookTitle.ToListAsync();
+            return View(titleList.OrderBy(x => x.SortableTitle ?? x.Title));
         }
+
 
         // GET: ComicBookTitles/Create
         public IActionResult Create() => View();
@@ -41,7 +28,7 @@ namespace ComicBookRepository.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,FirstIssue,LastIssue,NumIssues,NumSpIssues,LimitedSeries")] ComicBookTitle comicBookTitle)
+        public async Task<IActionResult> Create([Bind("Id,Title,FirstIssue,LastIssue,NumIssues,NumSpIssues,LimitedSeries,SortableTitle")] ComicBookTitle comicBookTitle)
         {
             if (!ModelState.IsValid) return View(comicBookTitle);
             _context.Add(comicBookTitle);
@@ -70,7 +57,7 @@ namespace ComicBookRepository.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Title,FirstIssue,LastIssue,NumIssues,NumSpIssues,LimitedSeries")] ComicBookTitle comicBookTitle)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Title,FirstIssue,LastIssue,NumIssues,NumSpIssues,LimitedSeries, SortableTitle")] ComicBookTitle comicBookTitle)
         {
             if (id != comicBookTitle.Id)
             {
@@ -92,7 +79,8 @@ namespace ComicBookRepository.Controllers
 
                 throw;
             }
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Index), new {id});
         }
 
         // GET: ComicBookTitles/Delete/5

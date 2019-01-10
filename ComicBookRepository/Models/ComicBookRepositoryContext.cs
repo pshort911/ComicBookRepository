@@ -1,7 +1,4 @@
-﻿using System;
-using ComicBookRepository.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ComicBookRepository
 {
@@ -18,15 +15,6 @@ namespace ComicBookRepository
 
         public virtual DbSet<ComicBookDetails> ComicBookDetails { get; set; }
         public virtual DbSet<ComicBookTitle> ComicBookTitle { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlite("Filename=D:\\\\\\\\Personal\\\\ComicBookRepository\\\\ComicBookRepository\\\\ComicBookRepository.db");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,8 +39,7 @@ namespace ComicBookRepository
 
                 entity.Property(e => e.Own)
                     .IsRequired()
-                    .HasColumnType("bit")
-                    .HasDefaultValueSql("0");
+                    .HasColumnType("BOOLEAN");
 
                 entity.Property(e => e.OwnerId).HasColumnType("nvarchar (450)");
 
@@ -60,15 +47,13 @@ namespace ComicBookRepository
 
                 entity.Property(e => e.SpecialIssue)
                     .IsRequired()
-                    .HasColumnType("bit")
-                    .HasDefaultValueSql("0");
+                    .HasColumnType("BOOLEAN");
 
                 entity.Property(e => e.TitleId).HasColumnName("TitleID");
 
                 entity.Property(e => e.Want)
                     .IsRequired()
-                    .HasColumnType("bit")
-                    .HasDefaultValueSql("0");
+                    .HasColumnType("BOOLEAN");
 
                 entity.HasOne(d => d.Title)
                     .WithMany(p => p.ComicBookDetails)
@@ -87,8 +72,7 @@ namespace ComicBookRepository
 
                 entity.Property(e => e.LimitedSeries)
                     .IsRequired()
-                    .HasColumnType("BOOLEAN")
-                    .HasDefaultValueSql("0");
+                    .HasColumnType("BOOLEAN");
 
                 entity.Property(e => e.NumIssues).HasColumnType("int");
 

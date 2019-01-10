@@ -1,4 +1,4 @@
-﻿@model ComicBookRepository.ComicBookTitle
+﻿@model ComicBookTitle
 
 @{
     ViewData["Title"] = "Edit";
@@ -42,6 +42,11 @@
                 <label asp-for="LimitedSeries" class="control-label"></label>
                 <input asp-for="LimitedSeries" class="form-control" />
                 <span asp-validation-for="LimitedSeries" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SortableTitle" class="control-label"></label>
+                <input asp-for="SortableTitle" class="form-control" />
+                <span asp-validation-for="SortableTitle" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
