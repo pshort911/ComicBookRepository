@@ -1,0 +1,63 @@
+﻿@model IEnumerable<ComicBookDetails>
+
+@{
+    ViewData["Title"] = "Want List";
+}
+
+<h1>Want List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SpecialIssue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IssueNum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IssueName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Grade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialIssue)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

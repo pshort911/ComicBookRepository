@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -13,10 +14,39 @@ namespace ComicBookRepository.Controllers
         public ComicBookTitlesController(ComicBookRepositoryContext context) => _context = context;
 
         // GET: ComicBookTitles
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page)
         {
-            var titleList = await _context.ComicBookTitle.ToListAsync();
-            return View(titleList.OrderBy(x => x.SortableTitle ?? x.Title));
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            if (searchString != null) {
+                page = 1;
+            }
+            else {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var titleList = from s in _context.ComicBookTitle select s;
+            if (!string.IsNullOrEmpty(searchString)) {
+                titleList = titleList.Where(s => s.Title.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    titleList = titleList.OrderByDescending(s => s.SortableTitle ?? s.Title);
+                    break;
+                default:
+                    titleList = titleList.OrderBy(s => s.SortableTitle ?? s.Title);
+                    break;
+            }
+
+            var pageSize = 100;
+            return View(await PaginatedList<ComicBookTitle>.CreateAsync(titleList.AsNoTracking(), page ?? 1, pageSize));
         }
 
 

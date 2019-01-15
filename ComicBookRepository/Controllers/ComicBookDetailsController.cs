@@ -119,6 +119,28 @@ namespace ComicBookRepository.Controllers
             return View(comicBookDetails);
         }
 
+        //GET: ComicBookDetails/OwnList
+        public async Task<IActionResult> OwnList()
+        {
+            var user = await GetCurrentUserAsync();
+            _userId = user?.Id;
+            if (_userId == null) return NotFound();
+
+            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.Own).Include(t => t.Title);
+            return View(comicBookDetails);
+        }
+
+        //GET: ComicBookDetails/WantList
+        public async Task<IActionResult> WantList()
+        {
+            var user = await GetCurrentUserAsync();
+            _userId = user?.Id;
+            if (_userId == null) return NotFound();
+
+            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.Want).Include(t => t.Title);
+            return View(comicBookDetails);
+        }
+
         #endregion Public Methods
 
         #region Private Methods
