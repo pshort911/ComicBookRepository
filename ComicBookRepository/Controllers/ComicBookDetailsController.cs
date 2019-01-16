@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace ComicBookRepository.Controllers
         private readonly ComicBookRepositoryContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private string _userId;
+        private IQueryable<ComicBookDetails> _comicBookDetails;
 
         #endregion Private Fields
 
@@ -107,10 +109,10 @@ namespace ComicBookRepository.Controllers
         }
 
         //GET: ComicBookDetails/asdf
-        public async Task<IActionResult> Index(long? id)
+        public async Task<ActionResult> Index(long? id)
         {
-            var user = await GetCurrentUserAsync();
-            _userId = user?.Id;
+            await UpdateUserId();
+
             if (_userId == null) return NotFound();
 
             var comicBookDetails = id == null ? 
@@ -120,25 +122,50 @@ namespace ComicBookRepository.Controllers
         }
 
         //GET: ComicBookDetails/OwnList
-        public async Task<IActionResult> OwnList()
+        public async Task<ActionResult> OwnList(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page)
         {
-            var user = await GetCurrentUserAsync();
-            _userId = user?.Id;
-            if (_userId == null) return NotFound();
+            await UpdateUserId();
 
-            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.Own).Include(t => t.Title);
-            return View(comicBookDetails);
+            if (_userId == null) return NotFound();
+            _comicBookDetails = from s in _context.ComicBookDetails where s.OwnerId == _userId where s.Own select s;
+
+            var sortingFiltering = GetSortingAndFilteringData(sortOrder, currentFilter, searchString, page);
+
+            ViewData["CurrentSort"] = sortingFiltering.CurrentSort;
+            ViewData["NameSortParm"] = sortingFiltering.NameSortParm;
+            page = sortingFiltering.CurrentPage;
+            ViewData["CurrentFilter"] = sortingFiltering.CurrentFilter;
+
+            var pageSize = 100;
+            return View(await PaginatedList<ComicBookDetails>.CreateAsync(_comicBookDetails.AsNoTracking(), page ?? 1, pageSize));
         }
 
         //GET: ComicBookDetails/WantList
-        public async Task<IActionResult> WantList()
+        public async Task<ActionResult> WantList(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page)
         {
-            var user = await GetCurrentUserAsync();
-            _userId = user?.Id;
+            await UpdateUserId();
+
             if (_userId == null) return NotFound();
 
-            var comicBookDetails = _context.ComicBookDetails.Where(m => m.OwnerId == _userId && m.Want).Include(t => t.Title);
-            return View(comicBookDetails);
+            _comicBookDetails = from s in _context.ComicBookDetails where s.OwnerId == _userId where s.Want select s;
+
+            var sortingFiltering = GetSortingAndFilteringData(sortOrder, currentFilter, searchString, page);
+
+            ViewData["CurrentSort"] = sortingFiltering.CurrentSort;
+            ViewData["NameSortParm"] = sortingFiltering.NameSortParm;
+            page = sortingFiltering.CurrentPage;
+            ViewData["CurrentFilter"] = sortingFiltering.CurrentFilter;
+            
+            var pageSize = 100;
+            return View(await PaginatedList<ComicBookDetails>.CreateAsync(_comicBookDetails.AsNoTracking(), page ?? 1, pageSize));
         }
 
         #endregion Public Methods
@@ -148,6 +175,54 @@ namespace ComicBookRepository.Controllers
         private bool ComicBookDetailsExists(long id) => _context.ComicBookDetails.Any(e => e.Id == id);
 
         private Task<IdentityUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+        private async Task UpdateUserId()
+        {
+            if (_userId == null)
+            {
+                var user = await GetCurrentUserAsync();
+                _userId = user?.Id;
+            }
+        }
+
+        private SortingAndFiltering GetSortingAndFilteringData(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page)
+        {
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            var sortingFiltering = new SortingAndFiltering
+            {
+                CurrentSort = sortOrder,
+                NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "",
+                CurrentFilter = searchString,
+                CurrentPage = page
+            };
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                _comicBookDetails = _comicBookDetails.Where(s => s.Title.Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    _comicBookDetails = _comicBookDetails.OrderByDescending(s => s.Title.SortableTitle ?? s.Title.Title);
+                    break;
+                default:
+                    _comicBookDetails = _comicBookDetails.OrderBy(s => s.Title.SortableTitle ?? s.Title.Title);
+                    break;
+            }
+
+            return sortingFiltering;
+        }
 
         #endregion Private Methods
     }

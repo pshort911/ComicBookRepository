@@ -22,30 +22,26 @@
 <table class="table">
     <thead>
         <tr>
-            <th><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                @Html.DisplayNameFor(model => model[0].Title)
-            </a>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                    @Html.DisplayNameFor(model => model[0].Title)
+                </a>
             </th>
-            <th class="center"><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-    @Html.DisplayNameFor(model => model[0].FirstIssue)
-                </a>
-</th>
-            <th class="center"><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-    @Html.DisplayNameFor(model => model[0].LastIssue)
-                </a>
-</th>
-            <th class="center"><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-    @Html.DisplayNameFor(model => model[0].NumIssues)
-                </a>
-</th>
-            <th class="center"><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-    @Html.DisplayNameFor(model => model[0].NumSpIssues)
-                </a>
-</th>
-            <th class="center"><a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">
-    @Html.DisplayNameFor(model => model[0].LimitedSeries)
-                </a>
-</th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].FirstIssue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].LastIssue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].NumIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].NumSpIssues)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].LimitedSeries)
+            </th>
             <th></th>
         </tr>
     </thead>

@@ -20,6 +20,8 @@ namespace ComicBookRepository.Controllers
             string searchString,
             int? page)
         {
+            var titleList = from s in _context.ComicBookTitle select s;
+
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             if (searchString != null) {
@@ -30,10 +32,8 @@ namespace ComicBookRepository.Controllers
             }
 
             ViewData["CurrentFilter"] = searchString;
-
-            var titleList = from s in _context.ComicBookTitle select s;
             if (!string.IsNullOrEmpty(searchString)) {
-                titleList = titleList.Where(s => s.Title.Contains(searchString));
+                titleList = titleList.Where(s => s.Title.Contains(searchString,StringComparison.InvariantCultureIgnoreCase));
             }
             switch (sortOrder)
             {
