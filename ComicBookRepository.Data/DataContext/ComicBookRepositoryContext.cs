@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ComicBookRepository.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComicBookRepository
 {

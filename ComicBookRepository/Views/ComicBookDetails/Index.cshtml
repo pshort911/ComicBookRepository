@@ -1,19 +1,19 @@
-﻿@model IEnumerable<ComicBookDetails>
-
+﻿@model IEnumerable<ComicBookDetailsDTO>
+@Html.AntiForgeryToken()
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Comic Book Details for @Html.DisplayFor(model => model.FirstOrDefault().Title.Title)</h1>
+<h1>Comic Book Details for @Html.DisplayFor(model => model.FirstOrDefault().BookTitle)</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table" id="tblDetails">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title.Title)
+                @Html.DisplayNameFor(model => model.BookTitle)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SpecialIssue)
@@ -43,40 +43,41 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpecialIssue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IssueNum)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IssueName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Grade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Own)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Want)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SpecialIssue)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.Own, new { @class = "own-checkbox", @id = $"own{item.Id}" })
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.Want, new { @class = "want-checkbox", @id = $"want{item.Id}" })
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

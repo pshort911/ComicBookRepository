@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ComicBookDetails>
+﻿@model IEnumerable<ComicBookDetailsDTO>
 
 @{
     ViewData["Title"] = "Own List";
@@ -10,7 +10,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title.Title)
+                @Html.DisplayNameFor(model => model.BookTitle)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.SpecialIssue)
@@ -37,7 +37,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title.Title)
+                    @Html.DisplayFor(modelItem => item.BookTitle)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.SpecialIssue)

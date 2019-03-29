@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace ComicBookRepository
+namespace ComicBookRepository.Core
 {
     public class PaginatedList<T> : List<T>
     {

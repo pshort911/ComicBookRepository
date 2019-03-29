@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
@@ -47,15 +48,16 @@ namespace ComicBookRepository
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
-            {
-                microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ApplicationId"];
-                microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
-                microsoftOptions.SaveTokens = true;
-            });
+            //services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+            //{
+            //    microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ApplicationId"];
+            //    microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
+            //    microsoftOptions.SaveTokens = true;
+            //});
             services.AddDbContext<ComicBookRepositoryContext>(options => options.UseSqlite(
                 Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

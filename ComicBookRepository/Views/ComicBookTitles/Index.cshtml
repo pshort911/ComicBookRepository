@@ -1,4 +1,4 @@
-﻿@model PaginatedList<ComicBookTitle>
+﻿@model ComicBookRepository.Core.PaginatedList<ComicBookTitleDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -19,7 +19,7 @@
     </div>
 </form>
 
-<table class="table">
+<table class="table" id="tblTitles">
     <thead>
         <tr>
             <th>
@@ -46,32 +46,39 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-controller="ComicBookDetails" asp-action="Index" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
-            </td>
-            <td class="center">
-                @Html.DisplayFor(modelItem => item.FirstIssue)
-            </td>
-            <td class="center">
-                @Html.DisplayFor(modelItem => item.LastIssue)
-            </td>
-            <td class="center">
-                @Html.DisplayFor(modelItem => item.NumIssues)
-            </td>
-            <td class="center">
-                @Html.DisplayFor(modelItem => item.NumSpIssues)
-            </td>
-            <td class="center">
-                @Html.DisplayFor(modelItem => item.LimitedSeries)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    <a asp-controller="ComicBookDetails" asp-action="Index" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+                <td class="center">
+                    <span>@Html.DisplayFor(modelItem => item.FirstIssue)</span>
+                    <input type="text" value="@item.FirstIssue" style="display: none" />
+                </td>
+                <td class="center">
+                    <span>@Html.DisplayFor(modelItem => item.LastIssue)</span>
+                    <input type="text" value="@item.LastIssue" style="display: none" />
+                </td>
+                <td class="center">
+                    <span>@Html.DisplayFor(modelItem => item.NumIssues)</span>
+                    <input type="text" value="@item.NumIssues" style="display: none" />
+                </td>
+                <td class="center">
+                    <span> @Html.DisplayFor(modelItem => item.NumSpIssues)</span>
+                    <input type="text" value="@item.NumSpIssues" style="display: none" />
+                </td>
+                <td class="center">
+                    <span> @Html.DisplayFor(modelItem => item.LimitedSeries)</span>
+                    <input type="checkbox" value="@item.LimitedSeries" style="display: none" />
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 @{
@@ -93,3 +100,103 @@
    class="btn btn-default @nextDisabled">
     Next
 </a>
+
+@*<script type="text/javascript">
+    $(function () {
+        //Remove the dummy row if data present.
+        if ($("#tblTitles tr").length > 2) {
+            $("#tblTitles tr:eq(1)").remove();
+        } else {
+            var row = $("#tblTitles tr:last-child");
+            row.find(".Edit").hide();
+            row.find(".Delete").hide();
+            row.find("span").html('&nbsp;');
+        }
+    });
+    //Edit event handler.
+    $("body").on("click", "#tblTitles .Edit", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                $(this).find("input").show();
+                $(this).find("span").hide();
+            }
+        });
+        row.find(".Update").show();
+        row.find(".Cancel").show();
+        row.find(".Delete").hide();
+        $(this).hide();
+    });
+
+    //Update event handler.
+    $("body").on("click", "#tblCustomers .Update", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                span.html(input.val());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Cancel").hide();
+        $(this).hide();
+
+        var customer = {};
+        customer.CustomerId = row.find(".CustomerId").find("span").html();
+        customer.Name = row.find(".Name").find("span").html();
+        customer.Country = row.find(".Country").find("span").html();
+        $.ajax({
+            type: "POST",
+            url: "/Home/UpdateCustomer",
+            data: '{customer:' + JSON.stringify(customer) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    });
+
+    //Cancel event handler.
+    $("body").on("click", "#tblCustomers .Cancel", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                input.val(span.html());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Update").hide();
+        $(this).hide();
+    });
+
+    //Delete event handler.
+    $("body").on("click", "#tblCustomers .Delete", function () {
+        if (confirm("Do you want to delete this row?")) {
+            var row = $(this).closest("tr");
+            var customerId = row.find("span").html();
+            $.ajax({
+                type: "POST",
+                url: "/Home/DeleteCustomer",
+                data: '{customerId: ' + customerId + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if ($("#tblCustomers tr").length > 2) {
+                        row.remove();
+                    } else {
+                        row.find(".Edit").hide();
+                        row.find(".Delete").hide();
+                        row.find("span").html('&nbsp;');
+                    }
+                }
+            });
+        }
+    });
+</script>*@
