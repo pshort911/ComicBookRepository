@@ -34,7 +34,8 @@ namespace ComicBookRepository.Controllers
         // GET: ComicBookTitles/Create
         public IActionResult Create() => View();
 
-        // POST: ComicBookTitles/Create To protect from overposting attacks, please enable the specific properties you want to bind to, for more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ComicBookTitles/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,FirstIssue,LastIssue,NumIssues,NumSpIssues,LimitedSeries,SortableTitle")] ComicBookTitleDTO comicBookTitle)
@@ -165,7 +166,7 @@ namespace ComicBookRepository.Controllers
                     break;
             }
 
-            var pageSize = 100;
+            var pageSize = 20;
             return View(await PaginatedList<ComicBookTitleDTO>.CreateAsync(titleList.ProjectTo<ComicBookTitleDTO>(_mapper.ConfigurationProvider), page ?? 1, pageSize));
         }
 

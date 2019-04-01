@@ -28,7 +28,7 @@ namespace ComicBookRepository
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Description).HasColumnType("ntext");
 
@@ -65,7 +65,7 @@ namespace ComicBookRepository
             {
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.FirstIssue).HasColumnType("int");
 

@@ -36,24 +36,36 @@ namespace ComicBookRepository.Controllers
 
         #region Public Methods
 
-        // GET: ComicBookDetails/Create
-        public IActionResult Create() => View();
+        // GET: ComicBookDetails/Create/5
+        [HttpGet]
+        public async Task<IActionResult> Create(long? id)
+        {
+            var comicBookTitles = await _context.ComicBookTitle.FirstOrDefaultAsync(m => m.Id == id);
+            var comicBookDetailDto = new ComicBookDetailsDTO
+            {
+                BookTitle = comicBookTitles.Title,
+                TitleId = comicBookTitles.Id
+            };
+            return View(comicBookDetailDto);
+        }
 
         // POST: ComicBookDetails/Create To protect from overposting attacks, please enable the specific properties you want to bind to, for more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OwnerId,BookTitle,SpecialIssue,IssueNum,IssueName,Grade,Rating,Description,Own,Want")]
-            ComicBookDetailsDTO comicBookDetails)
+        public async Task<IActionResult> Create([Bind("TitleId,OwnerId,BookTitle,SpecialIssue,IssueNum,IssueName,Grade,Rating,Description,Own,Want")]
+            ComicBookDetailsDTO comicBookDetailsDto)
         {
-            if (!ModelState.IsValid) return View(comicBookDetails);
+            if (!ModelState.IsValid) return View(comicBookDetailsDto);
             await GetUser();
-            comicBookDetails.OwnerId = _userId;
+            comicBookDetailsDto.OwnerId = _userId;
+            var comicBookDetails = _mapper.Map<ComicBookDetails>(comicBookDetailsDto);
             _context.Add(comicBookDetails);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), new {comicBookDetails.TitleId});
+            return RedirectToAction(nameof(Index), new { id = comicBookDetailsDto.TitleId});
         }
 
         // GET: ComicBookDetails/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null) return NotFound();
@@ -73,10 +85,11 @@ namespace ComicBookRepository.Controllers
             var comicBookDetails = await _context.ComicBookDetails.FindAsync(id);
             _context.ComicBookDetails.Remove(comicBookDetails);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), new {comicBookDetails.Title.Id});
+            return RedirectToAction(nameof(Index), new {id = comicBookDetails.TitleId});
         }
 
         // GET: ComicBookDetails/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null) return NotFound();
@@ -112,10 +125,11 @@ namespace ComicBookRepository.Controllers
                 throw;
             }
 
-            return RedirectToAction(nameof(Index), new { comicBookDetails.TitleId});
+            return RedirectToAction(nameof(Index), new { id= comicBookDetails.TitleId});
         }
 
         //GET: ComicBookDetails/asdf
+        [HttpGet]
         public async Task<ActionResult> Index(long? id)
         {
             await GetUser();
