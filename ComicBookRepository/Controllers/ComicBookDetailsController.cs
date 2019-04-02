@@ -17,7 +17,6 @@ namespace ComicBookRepository.Controllers
 
         private readonly ComicBookRepositoryContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private IQueryable<ComicBookDetailsDTO> _comicBookDetails;
         private readonly IMapper _mapper;
         private string _userId;
 
@@ -156,11 +155,10 @@ namespace ComicBookRepository.Controllers
 
             ViewData["CurrentSort"] = sortingFiltering.CurrentSort;
             ViewData["NameSortParm"] = sortingFiltering.NameSortParm;
-            page = sortingFiltering.CurrentPage;
             ViewData["CurrentFilter"] = sortingFiltering.CurrentFilter;
 
-            var pageSize = 100;
-            return View(await PaginatedList<ComicBookDetailsDTO>.CreateAsync(_comicBookDetails.AsNoTracking(), page ?? 1, pageSize));
+            var comicBookDetailsDto = comicBookDetails.ProjectTo<ComicBookDetailsDTO>(_mapper.ConfigurationProvider);
+            return View(comicBookDetailsDto);
         }
 
         [HttpPost]
@@ -187,11 +185,10 @@ namespace ComicBookRepository.Controllers
 
             ViewData["CurrentSort"] = sortingFiltering.CurrentSort;
             ViewData["NameSortParm"] = sortingFiltering.NameSortParm;
-            page = sortingFiltering.CurrentPage;
             ViewData["CurrentFilter"] = sortingFiltering.CurrentFilter;
 
-            var pageSize = 100;
-            return View(await PaginatedList<ComicBookDetailsDTO>.CreateAsync(_comicBookDetails.AsNoTracking(), page ?? 1, pageSize));
+            var comicBookDetailsDto = comicBookDetails.ProjectTo<ComicBookDetailsDTO>(_mapper.ConfigurationProvider);
+            return View(comicBookDetailsDto);
         }
 
         #endregion Public Methods
@@ -236,7 +233,7 @@ namespace ComicBookRepository.Controllers
                     break;
             }
 
-            _comicBookDetails = comicBookDetails.ProjectTo<ComicBookDetailsDTO>(_mapper.ConfigurationProvider);
+            comicBookDetails.ProjectTo<ComicBookDetailsDTO>(_mapper.ConfigurationProvider);
             return sortingFiltering;
         }
 

@@ -4,8 +4,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using ComicBookRepository.Core;
 using ComicBookRepository.Data;
 
 namespace ComicBookRepository.Controllers
@@ -131,21 +129,29 @@ namespace ComicBookRepository.Controllers
         }
 
         // GET: ComicBookTitles
-        public async Task<IActionResult> Index(
+        public IActionResult Index(
             string sortOrder,
             string currentFilter,
             string searchString,
             int? page)
         {
-            var titleList = from s in _context.ComicBookTitle select s;
+
+            var titleList = _context.ComicBookTitle.Include(a => a.ComicBookDetails).ToList();
+            var comicbookTitleDto = titleList.AsQueryable().Select(b => new ComicBookTitleDTO
+            {
+                Id = b.Id,
+                LimitedSeries = b.LimitedSeries,
+                SortableTitle = b.SortableTitle,
+                Title = b.Title,
+                NumIssues = b.ComicBookDetails.Count(x => x.TitleId == b.Id),
+                NumSpIssues = b.ComicBookDetails.Count(x => x.TitleId == b.Id && x.SpecialIssue),
+                FirstIssue = b.ComicBookDetails.Where(x => x.TitleId == b.Id && !x.SpecialIssue).Min(c=>c.IssueNum),
+                LastIssue = b.ComicBookDetails.Where(x => x.TitleId == b.Id && !x.SpecialIssue).Max(c => c.IssueNum)
+            });
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            if (searchString != null)
-            {
-                page = 1;
-            }
-            else
+            if (searchString == null)
             {
                 searchString = currentFilter;
             }
@@ -153,21 +159,19 @@ namespace ComicBookRepository.Controllers
             ViewData["CurrentFilter"] = searchString;
             if (!string.IsNullOrEmpty(searchString))
             {
-                titleList = titleList.Where(s => s.Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase));
+                comicbookTitleDto = comicbookTitleDto.Where(s => s.Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase));
             }
             switch (sortOrder)
             {
                 case "name_desc":
-                    titleList = titleList.OrderByDescending(s => s.SortableTitle ?? s.Title);
+                    comicbookTitleDto = comicbookTitleDto.OrderByDescending(s => s.SortableTitle ?? s.Title);
                     break;
 
                 default:
-                    titleList = titleList.OrderBy(s => s.SortableTitle ?? s.Title);
+                    comicbookTitleDto = comicbookTitleDto.OrderBy(s => s.SortableTitle ?? s.Title);
                     break;
             }
-
-            var pageSize = 20;
-            return View(await PaginatedList<ComicBookTitleDTO>.CreateAsync(titleList.ProjectTo<ComicBookTitleDTO>(_mapper.ConfigurationProvider), page ?? 1, pageSize));
+            return View(comicbookTitleDto.ToList());
         }
 
         // POST

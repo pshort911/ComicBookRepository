@@ -7,6 +7,7 @@ namespace ComicBookRepository.Data
     {
         #region Public Constructors
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

@@ -1,14 +1,17 @@
-﻿using ComicBookRepository.Data;
+﻿using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable SuggestBaseTypeForParameter
 
-namespace ComicBookRepository
+namespace ComicBookRepository.Data
 {
-    public partial class ComicBookRepositoryContext : DbContext
+    public class ComicBookRepositoryContext : DbContext
     {
+        [UsedImplicitly]
         public ComicBookRepositoryContext()
         {
         }
 
+        [UsedImplicitly]
         public ComicBookRepositoryContext(DbContextOptions<ComicBookRepositoryContext> options)
             : base(options)
         {
@@ -19,7 +22,7 @@ namespace ComicBookRepository
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.1-servicing-10028");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
 
             modelBuilder.Entity<ComicBookDetails>(entity =>
             {
@@ -67,17 +70,11 @@ namespace ComicBookRepository
                     .HasColumnName("ID")
                     .ValueGeneratedOnAdd();
 
-                entity.Property(e => e.FirstIssue).HasColumnType("int");
-
-                entity.Property(e => e.LastIssue).HasColumnType("int");
-
                 entity.Property(e => e.LimitedSeries)
                     .IsRequired()
                     .HasColumnType("BOOLEAN");
 
-                entity.Property(e => e.NumIssues).HasColumnType("int");
-
-                entity.Property(e => e.NumSpIssues).HasColumnType("int");
+                entity.Property(e => e.SortableTitle).HasColumnType("nvarchar (100)");
 
                 entity.Property(e => e.Title)
                     .IsRequired()

@@ -42,18 +42,10 @@ namespace ComicBookRepository
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            //services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
-            //{
-            //    microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ApplicationId"];
-            //    microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
-            //    microsoftOptions.SaveTokens = true;
-            //});
             services.AddDbContext<ComicBookRepositoryContext>(options => options.UseSqlite(
                 Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

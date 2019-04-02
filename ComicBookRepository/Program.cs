@@ -14,21 +14,23 @@ namespace ComicBookRepository {
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) => {
-                    var env = context.HostingEnvironment;
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("appsettings.json", false, true);
-                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
-                    var builtConfig = config.Build();
-                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                    var keyVaultClient = new KeyVaultClient((authority, resource, scope) => azureServiceTokenProvider.KeyVaultTokenCallback(authority, resource, scope));
-                    config.AddAzureKeyVault(
+                .ConfigureAppConfiguration((context, config) =>
+                    {
+                        var env = context.HostingEnvironment;
+                        config.SetBasePath(Directory.GetCurrentDirectory());
+                        config.AddJsonFile("appsettings.json", false, true);
+                        config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+                        if (env.IsDevelopment()) return;
+                        var builtConfig = config.Build();
+                        var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                        var keyVaultClient = new KeyVaultClient((authority, resource, scope) => azureServiceTokenProvider.KeyVaultTokenCallback(authority, resource, scope));
+                        config.AddAzureKeyVault(
 
-                        builtConfig["KeyVault:BaseUrl"],
-                        keyVaultClient,
-                        new DefaultKeyVaultSecretManager());
-                }
-                    )
+                            builtConfig["KeyVault:BaseUrl"],
+                            keyVaultClient,
+                            new DefaultKeyVaultSecretManager());
+                    }
+                )
                 .UseStartup<Startup>();
 
         public static void Main(string[] args) {

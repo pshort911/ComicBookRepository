@@ -2,9 +2,9 @@
 {
     public class SortingAndFiltering
     {
-        public string CurrentSort;
-        public string NameSortParm;
-        public string CurrentFilter;
-        public int? CurrentPage;
+        public string CurrentSort { get; set; }
+        public string NameSortParm { get; set; }
+        public string CurrentFilter { get; set; }
+        public int? CurrentPage { get; set; }
     }
 }
